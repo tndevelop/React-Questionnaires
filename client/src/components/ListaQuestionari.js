@@ -3,13 +3,17 @@ import { Container, Form } from "react-bootstrap";
 import {  Link} from "react-router-dom";
 
 function ListaQuestionari(props) {
+
+  const redirectAddress = props.utilizzatore ? "/utilizzatore/questionario" :  "/admin/questionario"
+
   return (
     <Col as={Container} fluid="xl" className="mainContainer">
       
     <ListGroup variant="flush">
+      
       {props.questionari.map((q, index) => {
         return (
-          <Link to={{pathname: "/questionario",
+          <Link to={{pathname: redirectAddress,
           state : {"qId" : q.id}}}>
             <ListGroup.Item key={q.id} index={q.id} onClick={() => {
 

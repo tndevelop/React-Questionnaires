@@ -1,12 +1,14 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import React from "react";
+import {React, useState} from "react";
 import './App.css';
 import { Container, Button, Col} from "react-bootstrap";
-import {  BrowserRouter as Router,  Switch,  Route,  Redirect,} from "react-router-dom";
+import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
 import ListaQuestionari from "./components/ListaQuestionari";
 import ListaRisposte from "./components/ListaRisposte";
 import ButtonNuovoQuestionario from "./components/ButtonNuovoQuestionario";
 import CreaQuestionario from "./components/CreaQuestionario";
+import {LoginForm} from "./components/LoginForm"
+import CompilaQuestionario from "./components/CompilaQuestionario";
 
 const questionari= [
 
@@ -18,30 +20,69 @@ const questionari= [
 ];
 
 const domande = [
-  {dId: 1, nome: "Tommaso", qId: 1, domanda: "ti piacciono le mele?", risposte: ["Sì", "No", "Così così"], rispostaSelezionata : 0},
-  {dId: 2, nome: "Tommaso", qId: 1, domanda: "ti piacciono le fragole?", risposte: ["Sì", "No", "Così così"], rispostaSelezionata : 2}
+  {dId: 1, nome: "Tommaso", qId: 1, domanda: "ti piacciono le mele?", risposte: ["Sì", "No", "Così così"], rispostaSelezionata : 0, chiusa:true},
+  {dId: 2, nome: "Tommaso", qId: 1, domanda: "ti piacciono le fragole?", risposte: ["Sì", "No", "Così così"], rispostaSelezionata : 2, chiusa:true},
+  {dId: 3, nome: "Tommaso", qId: 1, domanda: "ti piacciono le banane?", risposte: [], rispostaSelezionata : 2, chiusa:false}
+
+
+];
+
+const domandeQuestionario = [
+  {dId: 0, nome: "Tommaso", qId: 1, domanda: "ti piacciono le mele?", risposte: [{testo: "Sì", selezionata:false},{testo: "No", selezionata:false},{testo: "Così così", selezionata:false}], rispostaSelezionata : 0, chiusa:true, maxR:1},
+  {dId: 1, nome: "Tommaso", qId: 1, domanda: "ti piacciono le fragole?", risposte: [{testo: "Sì", selezionata:false},{testo: "No", selezionata:false},{testo: "Così così", selezionata:false}], rispostaSelezionata : 2, chiusa:true, maxR:2},
+  {dId: 2, nome: "Tommaso", qId: 1, domanda: "ti piacciono le banane?", risposte: [], testoRispostaAperta : "", chiusa:false}
 
 
 ];
 
 function App() {
+  const [dirty, setDirty] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState({ id: -1 });
+
+  const login = async (credentials) => {
+    try {
+      //const response = await API.logIn(credentials);
+      //if (response) {
+      //  setUser({ id: response.id, name: response.name });
+        setLoggedIn(true);
+        setDirty(true); //così viene eseguita la useEffect
+      return true;//  return response.name;
+      //}
+    } catch (e) {
+      return "Incorrect username and/or password";
+    }
+
+  }
   return (
     
     <Router>
       
       <Container fluid="true">
         <Switch>
-          <Route
-            path="/login"
+        <Route
+            path="/utilizzatore/questionario"
+            render={({location}) => (
+              <>
+                <CompilaQuestionario
+                domande = {domandeQuestionario.filter(r => r.qId===location.state.qId)}
+                ></CompilaQuestionario>
+              </>
+            )}
+          />
+        <Route
+            path="/utilizzatore"
             render={() => (
               <>
-               
+                <ListaQuestionari questionari={questionari} utilizzatore="true"></ListaQuestionari>
               </>
             )}
           />
 
+        
+
           <Route
-            path="/questionario/crea"
+            path="/admin/questionario/crea"
             render={() => (
               <>
                 <CreaQuestionario></CreaQuestionario>
@@ -50,7 +91,7 @@ function App() {
           />
 
           <Route
-            path="/questionario"
+            path="/admin/questionario"
             render={({location}) => (
               <>
                 <ListaRisposte 
@@ -64,7 +105,7 @@ function App() {
           
           <Route
             exact
-            path="/"
+            path="/admin"
             render={() => {
                 return (
                   <>
@@ -76,6 +117,18 @@ function App() {
                 );
               }
             }
+          />
+
+        <Route
+            path="/"
+            render={() => (
+              <>{loggedIn ? ( <Redirect to ={"/admin"}/>) :
+                <><LoginForm login = {login}></LoginForm>
+                  <Link to="/utilizzatore"><Button>continua come utilizzatore</Button></Link>
+                </>
+                }
+              </>
+            )}
           />
         </Switch>
         </Container>
