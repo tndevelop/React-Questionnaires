@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "bcrypt": "^5.0.1",
+    "dayjs": "^1.10.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "sqlite3": "^5.0.2"
   }
 }
