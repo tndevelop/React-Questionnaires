@@ -14,7 +14,12 @@ function ListaQuestionari(props) {
       if (props.loggedIn) {
         const questionari = await API.fetchQuestionari(props.userId);
         setQuestionari(questionari);
+      }else if(props.utilizzatore){
+        const questionari = await API.fetchQuestionariUtilizzatore(props.userId);
+        console.log(questionari)
+        setQuestionari(questionari);
       }
+      
     };
     
     getQuestionari().catch((err) => {
@@ -30,7 +35,7 @@ function ListaQuestionari(props) {
       {questionari.map((q, index) => {
         return (
           <Link to={{pathname: redirectAddress,
-          state : {"qId" : q.id}}}>
+          state : {"qId" : q.id, "userId": q.user}}}>
             <ListGroup.Item key={q.id} index={q.id} onClick={() => {
 
             }}>

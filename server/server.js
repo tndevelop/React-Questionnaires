@@ -3,6 +3,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const dao = require("./dao");
+const { check, query, validationResult } = require("express-validator"); // validation middleware
 
 // init express
 const app = new express();
@@ -72,3 +73,137 @@ app.get("/api/admin/risposteQuestionario",  /*isLoggedIn,*/ (req, res) => {
         .then((questionari) => res.json(questionari))
         .catch(() => res.status(500).end());
 });
+
+
+//POST /api/admin/questionari
+app.post(
+  "/api/admin/questionari",
+  /*isLoggedIn,*/
+  [
+    check("titolo").exists(),
+    check("user_id").exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+      
+      let questionario = req.body;
+      let id = await dao.getQuestionarioMaxId();
+      
+      await dao.createQuestionario(questionario, id);
+      res.status(200).json(id).end();
+    } catch (err) {
+      res
+        .status(503)
+        .json({ error: `Database error while adding the task: ${err}` });
+    }
+  }
+);
+
+//POST /api/utilizzatore/domandeQuestionario
+app.post(
+  "/api/utilizzatore/domandeQuestionario",
+  /*isLoggedIn,*/
+  [
+    check("dId").exists(),
+    check("domanda").exists(),
+    check("risposte").exists(),
+
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+      
+      let domanda = req.body;
+      
+      
+      await dao.createDomanda(domanda);
+      res.status(200).end();
+    } catch (err) {
+      res
+        .status(503)
+        .json({ error: `Database error while adding the task: ${err}` });
+    }
+  }
+);
+
+
+// GET /api/utilizzatore/questionari
+app.get("/api/utilizzatore/questionari", (req, res) => {
+      dao.questionariUtilizzatore(
+        )
+        .then((questionari) => res.json(questionari))
+        .catch(() => res.status(500).end());
+});
+
+// GET /api/utilizzatore/domande
+app.get("/api/utilizzatore/domande", (req, res) => {
+  const questId = req.query.quest_id;
+  dao.domandeQuestionarioUtilizzatore(
+      questId,
+    )
+    .then((questionari) => res.json(questionari))
+    .catch(() => res.status(500).end());
+});
+
+// POST /api/admin/compilazioni 
+app.post(
+  "/api/utilizzatore/compilazioni",
+  /*isLoggedIn,*/
+  [
+    check("user").exists(),
+    check("qId").exists(),
+    check("nome").exists(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+      
+      let compilazione = req.body;
+      let id = await dao.getCompilazioneMaxId(compilazione.user, compilazione.qId);
+      
+      await dao.createCompilazione(compilazione, id);
+      res.status(200).json(id).end();
+    } catch (err) {
+      res
+        .status(503)
+        .json({ error: `Database error while adding the task: ${err}` });
+    }
+  }
+);
+
+// POST /api/admin/compilazioni 
+app.post(
+  "/api/utilizzatore/domande",
+  [
+    check("compilazione").exists(),
+    check("questionario").exists(),
+  ],
+  async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+      
+      let domanda = req.body;
+      let id = await dao.getDomandaMaxId(domanda.user, domanda.questionario, domanda.compilazione);
+      await dao.createDomanda(domanda, id);
+      res.status(200).json(id).end();
+    } catch (err) {
+      res
+        .status(503)
+        .json({ error: `Database error while adding the task: ${err}` });
+    }
+  }
+);

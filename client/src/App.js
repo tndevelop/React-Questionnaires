@@ -38,7 +38,7 @@ const domandeQuestionario = [
 
 function App() {
   const [dirty, setDirty] = useState(true);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({ id: 1 });
 
   const login = async (credentials) => {
@@ -66,6 +66,8 @@ function App() {
             render={({location}) => (
               <>
                 <CompilaQuestionario
+                qId = {location.state.qId}
+                userId = {location.state.userId}
                 domande = {domandeQuestionario.filter(r => r.qId===location.state.qId)}
                 ></CompilaQuestionario>
               </>
@@ -75,7 +77,7 @@ function App() {
             path="/utilizzatore"
             render={() => (
               <>
-                <ListaQuestionari questionari={questionari} utilizzatore="true"></ListaQuestionari>
+                <ListaQuestionari  utilizzatore="true"></ListaQuestionari>
               </>
             )}
           />
@@ -86,7 +88,7 @@ function App() {
             path="/admin/questionario/crea"
             render={() => (
               <>
-                <CreaQuestionario></CreaQuestionario>
+                <CreaQuestionario user = {user.id}></CreaQuestionario>
               </>
             )}
           />

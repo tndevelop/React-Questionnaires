@@ -1,9 +1,13 @@
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
-function CreaQuestionario(){
+import API from "../fileJS/API.js";
+
+function CreaQuestionario(props){
     const [nDomande, setNDomande] = useState(0);
     const[domande, setDomande] = useState([]);
+    const[nome, setNome] = useState("");
+
 
     const addRisposta = (indiceDomanda) => {
         const newDomande = domande;
@@ -43,11 +47,38 @@ function CreaQuestionario(){
         setDomande([...newDomande]);
     }
 
+    const submit = (user) => {
+        
+        const addQuestionario = async () => {
+            let q = {   };
+            q.titolo = nome;
+            q.user_id = user;
+            const qId = await API.addQuestionario(q);
+            q.qId = qId;
+            
+            for(let idx in domande){
+                let d;
+                if(domande[idx].chiusa){
+                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: domande[idx].risposte, chiusa:  domande[idx].chiusa, maxR : domande[idx].maxR}
+                }else{
+                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: [], chiusa:  domande[idx].chiusa}
+                }
+
+                API.addDomanda(d, q);
+            }    
+          };
+        
+
+          addQuestionario().catch((err) => {
+            console.error(err);
+          });   
+    }
+
     return(
 <Form>
   <Form.Group className="mb-3" >
     <Form.Label>Nome questionario</Form.Label>
-    <Form.Control type="text" />
+    <Form.Control type="text" value={nome} onChange = {(event) => setNome(event.target.value)}/>
     
   </Form.Group>
     
@@ -103,7 +134,7 @@ function CreaQuestionario(){
     </Col>
   <Row className = "mt-4">
     <Col >
-        <Button variant="success" type="submit">
+        <Button variant="success"  onClick = {() => submit(props.user)}>
             Submit
         </Button>
     </Col>
