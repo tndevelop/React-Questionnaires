@@ -9,6 +9,7 @@ import ButtonNuovoQuestionario from "./components/ButtonNuovoQuestionario";
 import CreaQuestionario from "./components/CreaQuestionario";
 import {LoginForm} from "./components/LoginForm"
 import CompilaQuestionario from "./components/CompilaQuestionario";
+import API from "./fileJS/API.js";
 
 const questionari= [
 
@@ -37,8 +38,8 @@ const domandeQuestionario = [
 
 function App() {
   const [dirty, setDirty] = useState(true);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({ id: -1 });
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [user, setUser] = useState({ id: 1 });
 
   const login = async (credentials) => {
     try {
@@ -94,7 +95,10 @@ function App() {
             path="/admin/questionario"
             render={({location}) => (
               <>
-                <ListaRisposte 
+                <ListaRisposte
+                  loggedIn = {loggedIn}
+                  userId = {user.id}
+                  qId = {location.state.qId}
                   domande = {domande.filter(r => r.qId===location.state.qId)}
                   
                 ></ListaRisposte>
@@ -110,7 +114,9 @@ function App() {
                 return (
                   <>
                    <ListaQuestionari
-                      questionari={questionari}
+                      loggedIn = {loggedIn}
+                      userId = {user.id}
+                      
                     ></ListaQuestionari>
                     <ButtonNuovoQuestionario/>
                   </>
