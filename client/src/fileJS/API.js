@@ -17,13 +17,20 @@ const fetchCompilazioni = async (userId, questId) => {
 const fetchDomandeQuestionario = async (compId, questId) => {
     const response = await fetch(`/api/admin/domandeQuestionario?comp_id=${compId}&quest_id=${questId}`);
     const responseBody = await response.json();
+    for (let idx in responseBody){
+      if (responseBody[idx].chiusa == "1" && typeof responseBody[idx].rispostaSelezionata === 'string')
+        responseBody[idx].rispostaSelezionata = responseBody[idx].rispostaSelezionata.split(",");
+    }
+    
+    
     return responseBody;
 };
 
-const fetchRisposteQuestionario = async (compId, questId, domId) => {
-    const response = await fetch(`/api/admin/risposteQuestionario?quest_id=${questId}&comp_id=${compId}&dom_id=${domId}`);
+const fetchRisposteQuestionario = async (userId, questId, domId) => {
+    const response = await fetch(`/api/admin/risposteQuestionario?quest_id=${questId}&user_id=${userId}&dom_id=${domId}`);
     const responseBody = await response.json();
-    return responseBody;
+    let arrayRisposte = responseBody[0].risposte.split(",");
+    return arrayRisposte;
 };
 
 const addQuestionario = async (questionario) => {
@@ -41,15 +48,15 @@ const addQuestionario = async (questionario) => {
   const addDomanda = async (domanda, questionario) => {
     domanda.qId = questionario.qId;
     domanda.user_id = questionario.user_id;
-    const response = await fetch("/api/utilizzatore/domandeQuestionario", {
+    const response = await fetch("/api/admin/domandeQuestionario", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(domanda),
     });
-    const responseBody = await response.json();
-    return response.status();
+    //const responseBody = await response.json();
+    return response.status;
   };
 
   const fetchQuestionariUtilizzatore = async () => {
@@ -61,7 +68,7 @@ const addQuestionario = async (questionario) => {
 const fetchDomandeUtilizzatore = async (questId) => {
     const response = await fetch(`/api/utilizzatore/domande?quest_id=${questId}`);
     const responseBody = await response.json();
-    console.log(responseBody)
+    
     for(let idxDomanda in responseBody){
         responseBody[idxDomanda].risposte = await responseBody[idxDomanda].risposte.split(",");
         for(let idxRisposta in responseBody[idxDomanda].risposte){

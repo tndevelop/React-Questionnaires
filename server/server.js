@@ -62,15 +62,15 @@ app.get("/api/admin/domandeQuestionario",  /*isLoggedIn,*/ (req, res) => {
 // GET /api/admin/risposteQuestionario -> tutte le risposte di una specifica domanda di una singola compilazione di un singolo questionario dell'admin
 app.get("/api/admin/risposteQuestionario",  /*isLoggedIn,*/ (req, res) => {
   const domId = req.query.dom_id;
-  const compId = req.query.comp_id;
+  const userId = req.query.user_id;
   const questId = req.query.quest_id;
       dao.risposteQuestionario(
         domId,
-        compId,
+        userId,
         questId,
         
         )
-        .then((questionari) => res.json(questionari))
+        .then((risposte) => res.json(risposte))
         .catch(() => res.status(500).end());
 });
 
@@ -103,9 +103,9 @@ app.post(
   }
 );
 
-//POST /api/utilizzatore/domandeQuestionario
+//POST /api/admin/domandeQuestionario
 app.post(
-  "/api/utilizzatore/domandeQuestionario",
+  "/api/admin/domandeQuestionario",
   /*isLoggedIn,*/
   [
     check("dId").exists(),
@@ -123,7 +123,7 @@ app.post(
       let domanda = req.body;
       
       
-      await dao.createDomanda(domanda);
+      await dao.createDomandaQuestionario(domanda);
       res.status(200).end();
     } catch (err) {
       res

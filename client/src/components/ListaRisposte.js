@@ -16,6 +16,7 @@ function ListaRisposte(props) {
       if (props.loggedIn) {
         const compilazioni = await API.fetchCompilazioni(props.userId, props.qId);
         setCompilazioni(compilazioni);
+        console.log(compilazioni)
       }
     };
     getCompilazioni().catch((err) => {
@@ -45,16 +46,18 @@ function ListaRisposte(props) {
     const getRisposte = async (nDomanda) => {
       const newDomande = domande;
       if (props.loggedIn && compilazioni.length > 0 && loadRisposte) {
-        const risposte = await API.fetchRisposteQuestionario(compilazioni[nCompilazione].id , props.qId, domande[nDomanda].id);
+        const risposte = await API.fetchRisposteQuestionario(props.userId , props.qId, domande[nDomanda].id-1);
         newDomande[nDomanda].risposte = risposte;
         setDomande([...newDomande]);
-        if(nDomanda == domande.filter(d => d.chiusa=="true").length-1)
+        if(nDomanda == domande.filter(d => d.chiusa=="1").length-1)
           setLoading(false);
         setLoadRisposte(false);
       }
-    };    
+    };  
+
+    
     for (let idx in domande){
-      if(domande[idx].chiusa=="true")
+      if(domande[idx].chiusa=="1")
         getRisposte(idx).catch((err) => {
           console.error(err);
         });
@@ -65,6 +68,10 @@ function ListaRisposte(props) {
 
   return (
     <Col as={Container} fluid="xl" className="mainContainer">
+      {loading? "" : 
+       <Row className = "mb-4">
+                    <Col/><Col>Compilazione fatta da: {compilazioni[nCompilazione].nomeUtilizzatore}</Col><Col/>
+        </Row>}
       {loading? <p>still loading</p> : domande.map((q, index) => {
         return (
           
@@ -73,11 +80,11 @@ function ListaRisposte(props) {
                     <Col/><Col>{q.testoDomanda}</Col><Col/>
                 </Row>
                 <ListGroup variant="flush">
-                    {q.chiusa=="true"? q.risposte.map((r, index) => {
+                    {q.chiusa=="1"? q.risposte.map((r, index) => {
                     return ( 
-                        <ListGroup.Item key={index} index={index} active={q.rispostaSelezionata === index} >
+                        <ListGroup.Item key={index} index={index} active={Array.isArray(q.rispostaSelezionata) ? q.rispostaSelezionata.includes(`${index}`): q.rispostaSelezionata === index} >
                             <Row>
-                            <Col>{r.testo}</Col>
+                            <Col>{r}</Col>
                             </Row>
                         </ListGroup.Item> 
                     );
@@ -92,7 +99,7 @@ function ListaRisposte(props) {
 
       })}
 
-      <Row><Col><Button disabled = {nCompilazione==0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button><Button disabled={nCompilazione == (compilazioni.length-1)} onClick= {() =>{console.log(nCompilazione); setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button></Col></Row>
+      <Row><Col><Button disabled = {nCompilazione==0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button><Button disabled={nCompilazione == (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button></Col></Row>
     
     </Col>
   );

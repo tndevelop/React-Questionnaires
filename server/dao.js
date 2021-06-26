@@ -89,12 +89,12 @@ exports.questionariAdmin = (userId) => {
     });
   };
 
-  exports.risposteQuestionario = (domId, compId, questId) => {
-    let query = `SELECT * FROM risposte_questionari`;
+  exports.risposteQuestionario = (domId, userId, questId) => {
+    let query = `SELECT * FROM domande_questionari_vuote`;
     let whereClause = [];
-    if (compId) whereClause.push(`compilazione = ${compId}`);
-    if (questId) whereClause.push(`questionario = ${questId}`);
-    if (domId) whereClause.push(`domanda = ${domId}`);
+    if (questId) whereClause.push(`q_id = ${questId}`);
+    if (domId) whereClause.push(`d_id = ${domId}`);
+    if (userId) whereClause.push(`user_id = ${userId}`);
     if (whereClause.length !== 0) query += " WHERE " + whereClause.join(" AND ");
     return new Promise((resolve, reject) => {
       db.all(query, [], (err, rows) => {
@@ -104,11 +104,7 @@ exports.questionariAdmin = (userId) => {
         }
         console.log(query);
         const risposte = rows.map((r) => ({
-          id: r.id,
-          testo: r.testo,
-          domanda: r.domanda,
-          compilazione : r.compilazione,
-          questionario: r.questionario,
+          risposte: r.risposte
         }));
         resolve(risposte);
       });
@@ -161,7 +157,7 @@ exports.createQuestionario =  (questionario, id) => {
     });
   };
   //create a new task
-exports.createDomanda =  (d) => {
+exports.createDomandaQuestionario =  (d) => {
     return new Promise((resolve, reject) =>  {
       const sql =
         "INSERT INTO domande_questionari_vuote(d_id,	q_id,	user_id,	domanda,	risposte,	chiusa,	maxR) VALUES(?, ?, ?, ?,?,?,?)";
