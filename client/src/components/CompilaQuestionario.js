@@ -2,6 +2,7 @@ import { Row, ListGroup, Col, Form, Button} from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import {useState, useEffect} from "react";
 import API from "../fileJS/API.js";
+import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
 
 function CompilaQuestionario(props) {
     const[nome, setNome] = useState("");
@@ -49,23 +50,6 @@ function CompilaQuestionario(props) {
         } 
         
 
-        /*
-        let q = {   };
-        q.titolo = nome;
-        q.user_id = user;
-        const qId = await API.addQuestionario(q);
-        q.qId = qId;
-        
-        for(let idx in domande){
-            let d;
-            if(domande[idx].chiusa){
-                d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: domande[idx].risposte, chiusa:  domande[idx].chiusa, maxR : domande[idx].maxR}
-            }else{
-                d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: [], chiusa:  domande[idx].chiusa}
-            }
-
-            API.addDomanda(d, q);
-        }    */
       };
     
 
@@ -133,7 +117,7 @@ function CompilaQuestionario(props) {
         );
 
       })}
-        <Button className="mt-4" onClick = {() => submit()}>Submit</Button>
+        <Link to="/utilizzatore"><Button className="mt-4" onClick = {() => submit()}>Submit</Button></Link>
     </Col>
   );
   

@@ -2,6 +2,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import API from "../fileJS/API.js";
+import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
 
 function CreaQuestionario(props){
     const [nDomande, setNDomande] = useState(0);
@@ -134,9 +135,9 @@ function CreaQuestionario(props){
     </Col>
   <Row className = "mt-4">
     <Col >
-        <Button variant="success"  onClick = {() => submit(props.user)}>
+        <Link to="/admin"><Button variant="success"  onClick = {() => submit(props.user)}>
             Submit
-        </Button>
+        </Button></Link>
     </Col>
   </Row>
 </Form>
