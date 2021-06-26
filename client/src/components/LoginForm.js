@@ -29,7 +29,7 @@ function LoginForm(props) {
 
     setMessage("");
     let response = await props.login(credentials);
-    //setMessage(response);
+    setMessage(response);
   };
 
   return (
@@ -65,9 +65,9 @@ function LoginForm(props) {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Link to="/admin"> <Button variant="primary" type="submit" onClick={tryLogin}>
+        <Button variant="primary" type="submit" onClick={tryLogin}>
           Login
-        </Button></Link>
+        </Button>
       </Form>
       <Col sm="4"></Col>
     </Row>

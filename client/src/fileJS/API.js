@@ -106,6 +106,21 @@ const addCompilazione = async (compilazione) => {
     const responseBody = await response.json();
     return responseBody;
   };
+
+  async function logIn(credentials) {
+    let response = await fetch("/api/sessions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+    return await response.json();
+  }
+  
+  async function logOut() {
+    await fetch("/api/sessions/current", { method: "DELETE" });
+  }
 const API = {
     fetchQuestionari,
     fetchCompilazioni,
@@ -117,6 +132,8 @@ const API = {
     fetchDomandeUtilizzatore,
     addCompilazione,
     addDomandaCompilata,
+    logIn,
+    logOut
   };
   export default API;
   
