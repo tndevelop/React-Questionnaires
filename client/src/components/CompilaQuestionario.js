@@ -18,7 +18,6 @@ function CompilaQuestionario(props) {
       const setValueRispostaAperta = (testo, indiceDomanda) => {
         const newDomande = domande;
         newDomande[indiceDomanda].testoRispostaAperta = testo;
-        console.log(newDomande[indiceDomanda])
         setDomande([...newDomande]);
     }
 
@@ -34,6 +33,7 @@ function CompilaQuestionario(props) {
           user: props.userId
         }
         const compId = await API.addCompilazione(compilazione);
+        await API.increaseNCompilazioni(props.qId, props.userId);
         
         for(let idx in domande){
           let d;
@@ -62,7 +62,6 @@ function CompilaQuestionario(props) {
       const getDomande = async () => {
           const domande = await API.fetchDomandeUtilizzatore(props.qId);
           setDomande(domande);
-          console.log(domande);     
       };
       
       getDomande().catch((err) => {

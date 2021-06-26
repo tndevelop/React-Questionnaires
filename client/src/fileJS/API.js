@@ -94,6 +94,22 @@ const addCompilazione = async (compilazione) => {
     return responseBody;
   };
 
+  const increaseNCompilazioni = async (questionario, user) => {
+    let bodyChiamata = {
+      q_id : questionario,
+      user_id : user
+    };
+    const response = await fetch("/api/utilizzatore/questionari", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyChiamata),
+    });
+    const responseBody = await response.json();
+    return responseBody;
+  };
+
   const addDomandaCompilata = async (domanda) => {
     
     const response = await fetch("/api/utilizzatore/domande", {
@@ -133,7 +149,8 @@ const API = {
     addCompilazione,
     addDomandaCompilata,
     logIn,
-    logOut
+    logOut,
+    increaseNCompilazioni
   };
   export default API;
   

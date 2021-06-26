@@ -281,6 +281,32 @@ exports.createDomandaQuestionario =  (d) => {
     });
   };
 
+  exports.increaseCompilazioni =  (user, qId, n) => {
+    return new Promise((resolve, reject) =>  {
+      const sql =
+        "UPDATE questionari SET nCompilazioni=? WHERE id=? AND user=?";
+      db.run(
+        sql,
+        [
+          n,
+          qId,
+          user,
+        ],
+        function (err) {
+          console.log(sql)
+          console.log(n + " " + user + " " + qId);
+          if (err) {
+            reject(err);
+            return;
+          } 
+          resolve(this.lastID);
+          
+        }
+      );
+  
+    });
+  };
+
   exports.getDomandaMaxId = (user_id, quest_id, comp_id) => {
     return new Promise((resolve, reject) => {
       let sql_id = "SELECT MAX(id) as maxId FROM domande_questionari";
@@ -303,6 +329,32 @@ exports.createDomandaQuestionario =  (d) => {
           id = 1;
         }
         resolve(id);
+      });
+    })
+  };
+
+  
+  exports.getActualNCompilazioni = (user_id, quest_id) => {
+    return new Promise((resolve, reject) => {
+      let sql_id = "SELECT nCompilazioni FROM questionari";
+      let whereClause = [];
+    if (user_id) whereClause.push(`user = ${user_id}`);
+    if (quest_id) whereClause.push(`id = ${quest_id}`);
+    if (whereClause.length !== 0) sql_id += " WHERE " + whereClause.join(" AND ");
+    console.log(sql_id)
+      let n;
+      db.get(sql_id, [], (err, row) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (row.nCompilazioni) {
+          n = row.nCompilazioni + 1;
+  
+        } else {
+          n = 1;
+        }
+        resolve(n);
       });
     })
   };

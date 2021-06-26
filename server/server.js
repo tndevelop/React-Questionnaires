@@ -160,6 +160,36 @@ app.post(
   }
 );
 
+
+//POST /api/utilizzatore/questionari
+app.post(
+  "/api/utilizzatore/questionari",
+  [
+    check("q_id").exists(),
+    check("user_id").exists()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+      
+      let input = req.body;
+      console.log(input)
+      let n = await dao.getActualNCompilazioni(input.user_id, input.q_id);
+      console.log("compilazioni per questionario " + input.q_id + " dello user: " + input.user_id);
+      console.log(n)
+      await dao.increaseCompilazioni(input.user_id, input.q_id, n);
+      res.status(200).json(n).end();
+    } catch (err) {
+      res
+        .status(503)
+        .json({ error: `Database error while adding the task: ${err}` });
+    }
+  }
+);
+
 //POST /api/admin/domandeQuestionario
 app.post(
   "/api/admin/domandeQuestionario",
@@ -212,7 +242,6 @@ app.get("/api/utilizzatore/domande", (req, res) => {
 // POST /api/admin/compilazioni 
 app.post(
   "/api/utilizzatore/compilazioni",
-  isLoggedIn,
   [
     check("user").exists(),
     check("qId").exists(),
