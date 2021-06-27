@@ -67,6 +67,7 @@ function CreaQuestionario(props){
         if (minR > maxR) minR=maxR;
         if (minR < 0) minR = 0;
         if (!Number.isInteger(parseInt(minR))) minR = 1;
+        if (minR > newDomande[indiceDomanda].risposte.length) minR = newDomande[indiceDomanda].risposte.length;
         newDomande[indiceDomanda].minR = minR;
         setDomande([...newDomande]);
     }
@@ -100,8 +101,8 @@ function CreaQuestionario(props){
     const validmaxR = (maxR) => {
         return Number.isInteger(parseInt(maxR)) &&  maxR >= 1 && maxR <= 10;
       };
-    const validminR = (minR) => {
-        return Number.isInteger(parseInt(minR)) &&  minR >= 0 && minR <= 10;
+    const validminR = (minR, risposte) => {
+        return Number.isInteger(parseInt(minR)) &&  minR >= 0 && minR <= 10 && minR <= risposte.length;
       };
 
       const moveQuestion = (indiceDomanda, nuovoIndice) => {
@@ -110,6 +111,7 @@ function CreaQuestionario(props){
         const tmpId = newDomande[indiceDomanda].dId;
         newDomande[indiceDomanda].dId = newDomande[nuovoIndice].dId;
         newDomande[nuovoIndice].dId = tmpId;
+        console.log(newDomande)
         setDomande([...newDomande]);
       }
     const submit = (user) => {
@@ -192,7 +194,7 @@ function CreaQuestionario(props){
                             type="number" 
                             value={d.minR} 
                             onChange = {(event) => setMinR(event.target.value, index, d.maxR) } 
-                            isInvalid={!validminR(d.minR)}
+                            isInvalid={!validminR(d.minR, d.risposte)}
                         />
                     </Col>
                     <Col/>

@@ -88,7 +88,7 @@ function CompilaQuestionario(props) {
       const getDomande = async () => {
           const domande = await API.fetchDomandeUtilizzatore(props.qId);
           for(let idx in domande){   domande[idx].testoRispostaAperta = "";     } //create attribute so that it doesn't trigger warning afterwards
-          setDomande(domande);
+          setDomande(domande.sort((a,b) => a.dId - b.dId));
       };
       
       getDomande().catch((err) => {

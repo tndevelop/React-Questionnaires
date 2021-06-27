@@ -8,7 +8,7 @@ function BackButton(props) {
   
 
   return (
-        <Link to={redirectAddress}><Button variant="primary">
+        <Link to={redirectAddress}><Button className="mt-3" variant="primary">
             <AiOutlineLeft></AiOutlineLeft>
           Torna ai questionari {props.faseModifica ? "(eventuali modifiche non verranno salvate)" : ""}
         </Button></Link>

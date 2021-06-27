@@ -49,7 +49,6 @@ function ListaRisposte(props) {
         const risposte = await API.fetchRisposteQuestionario(props.userId , props.qId, domande[nDomanda].id-1);
         newDomande[nDomanda].risposte = risposte;
         setDomande([...newDomande]);
-        console.log(domande)
         let domandeChiuse = domande.filter(d => d.chiusa==="1")
         if(parseInt(nDomanda) === domandeChiuse[domandeChiuse.length -1].id -1 )
           setLoading(false);
@@ -74,7 +73,7 @@ function ListaRisposte(props) {
        <Row className = "mb-4">
                     <Col/><Col>Compilazione fatta da: {compilazioni[nCompilazione].nomeUtilizzatore}</Col><Col/>
         </Row>}
-      {loading? <p>still loading</p> : domande.map((q, index) => {
+      {loading? <p>Non ci sono compilazioni qui</p> : domande.map((q, index) => {
         return (
           
             <>
