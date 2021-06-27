@@ -82,7 +82,6 @@ app.use(passport.session());
 app.get("/api/admin/questionari",  isLoggedIn, (req, res) => {
   
   const userId = req.query.user_id;
-  console.log(userId);
       dao.questionariAdmin(
         userId
         )
@@ -176,10 +175,7 @@ app.post(
     try {
       
       let input = req.body;
-      console.log(input)
       let n = await dao.getActualNCompilazioni(input.user_id, input.q_id);
-      console.log("compilazioni per questionario " + input.q_id + " dello user: " + input.user_id);
-      console.log(n)
       await dao.increaseCompilazioni(input.user_id, input.q_id, n);
       res.status(200).json(n).end();
     } catch (err) {

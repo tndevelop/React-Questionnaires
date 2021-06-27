@@ -297,8 +297,6 @@ exports.createDomandaQuestionario =  (d) => {
           user,
         ],
         function (err) {
-          console.log(sql)
-          console.log(n + " " + user + " " + qId);
           if (err) {
             reject(err);
             return;

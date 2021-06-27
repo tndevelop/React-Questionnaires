@@ -65,7 +65,7 @@ function CreaQuestionario(props){
     const setMinR = (minR, indiceDomanda, maxR) => {
         const newDomande = domande;
         if (minR > maxR) minR=maxR;
-        if (minR < 1) minR = 1;
+        if (minR < 0) minR = 0;
         if (!Number.isInteger(parseInt(minR))) minR = 1;
         newDomande[indiceDomanda].minR = minR;
         setDomande([...newDomande]);
@@ -101,7 +101,7 @@ function CreaQuestionario(props){
         return Number.isInteger(parseInt(maxR)) &&  maxR >= 1 && maxR <= 10;
       };
     const validminR = (minR) => {
-        return Number.isInteger(parseInt(minR)) &&  minR >= 1 && minR <= 10;
+        return Number.isInteger(parseInt(minR)) &&  minR >= 0 && minR <= 10;
       };
 
       const moveQuestion = (indiceDomanda, nuovoIndice) => {

@@ -49,7 +49,9 @@ function ListaRisposte(props) {
         const risposte = await API.fetchRisposteQuestionario(props.userId , props.qId, domande[nDomanda].id-1);
         newDomande[nDomanda].risposte = risposte;
         setDomande([...newDomande]);
-        if(parseInt(nDomanda) === domande.filter(d => d.chiusa==="1").length-1)
+        console.log(domande)
+        let domandeChiuse = domande.filter(d => d.chiusa==="1")
+        if(parseInt(nDomanda) === domandeChiuse[domandeChiuse.length -1].id -1 )
           setLoading(false);
         setLoadRisposte(false);
       }
@@ -90,7 +92,7 @@ function ListaRisposte(props) {
                     );
             
                     }): 
-                    <p>{(q.rispostaAperta != undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <b>L'utilizzatore non ha risposto alla domanda</b>}</p>
+                    <p>{(q.rispostaAperta !== undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <b>L'utilizzatore non ha risposto alla domanda</b>}</p>
                     }
                 </ListGroup>
           </>
