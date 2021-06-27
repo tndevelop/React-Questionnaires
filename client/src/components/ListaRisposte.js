@@ -90,7 +90,7 @@ function ListaRisposte(props) {
                     );
             
                     }): 
-                    <p>{q.rispostaAperta}</p>
+                    <p>{(q.rispostaAperta != undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <b>L'utilizzatore non ha risposto alla domanda</b>}</p>
                     }
                 </ListGroup>
           </>

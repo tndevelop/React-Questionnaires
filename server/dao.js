@@ -160,7 +160,7 @@ exports.createQuestionario =  (questionario, id) => {
 exports.createDomandaQuestionario =  (d) => {
     return new Promise((resolve, reject) =>  {
       const sql =
-        "INSERT INTO domande_questionari_vuote(d_id,	q_id,	user_id,	domanda,	risposte,	chiusa,	maxR) VALUES(?, ?, ?, ?,?,?,?)";
+        "INSERT INTO domande_questionari_vuote(d_id,	q_id,	user_id,	domanda,	risposte,	chiusa,	maxR, minR, obbligatoria) VALUES(?, ?, ?, ?,?,?,?, ?, ?)";
       db.run(
         sql,
         [
@@ -170,7 +170,9 @@ exports.createDomandaQuestionario =  (d) => {
           d.domanda,
           d.risposte,
           d.chiusa,
-          d.maxR
+          d.maxR,
+          d.minR,
+          d.obbligatoria
         ],
         function (err) {
           if (err) {
@@ -225,7 +227,9 @@ exports.createDomandaQuestionario =  (d) => {
             domanda: q.domanda,
             risposte: q.risposte,
             chiusa: q.chiusa,
-            maxR: q.maxR
+            maxR: q.maxR,
+            minR: q.minR,
+            obbligatoria: q.obbligatoria
           }));
           resolve(domande);
         });

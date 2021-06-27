@@ -18,10 +18,10 @@ function CompilaQuestionario(props) {
         if (!validString(nome)) return false;
         for(let idxD in domande){
             if(domande[idxD].chiusa === "1"){
-                if(domande[idxD].risposte.filter(r=>r.selezionata === true).length===0) 
+                if(domande[idxD].risposte.filter(r=>r.selezionata === true).length<domande[idxD].minR) 
                   return false;
             }else {
-              if(!validString(domande[idxD].testoRispostaAperta)) return false;
+              if(domande[idxD].obbligatoria === "1" && !validString(domande[idxD].testoRispostaAperta)) return false;
             }
         }
         return ret;
@@ -123,10 +123,10 @@ function CompilaQuestionario(props) {
                 <Row key= {index}>
                     <Col/> 
                     <Col>{d.domanda}</Col> 
-                    {d.chiusa==="1"? <Col>massimo risposte: {d.maxR}</Col> :  <Col/>
+                    {d.chiusa==="1"? <Col>massimo risposte: {d.maxR} minimo risposte: {d.minR}</Col> :  <Col>domanda {d.obbligatoria==="1" ? "obbligatoria" : "facoltativa"}</Col>
                       
                     }
-                    {d.chiusa==="1" && d.risposte.filter((r) => r.selezionata).length === 0 ? <p className="red">select at least 1</p> : "" }
+                    {d.chiusa==="1" && d.risposte.filter((r) => r.selezionata).length < d.minR ? <p className="red">select at least {d.minR}</p> : "" }
                 </Row>
                 <ListGroup key={index + domande.length} variant="flush">
 
@@ -156,7 +156,8 @@ function CompilaQuestionario(props) {
                           type="text" 
                           value={d.testoRispostaAperta} 
                           onChange = {(event) => setValueRispostaAperta(event.target.value, d.dId)} 
-                          isInvalid={!validString(d.testoRispostaAperta)}
+                          isInvalid={d.obbligatoria === "1" && !validString(d.testoRispostaAperta)}
+                          maxLength = "200"
                         />
                     }
                 </ListGroup>

@@ -5,6 +5,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import API from "../fileJS/API.js";
 import { Link} from "react-router-dom";
 import { BackButton } from "./BackButton";
+import {AiOutlineCaretDown, AiOutlineCaretUp} from "react-icons/ai";
 
 function CreaQuestionario(props){
     const [nDomande, setNDomande] = useState(0);
@@ -16,10 +17,10 @@ function CreaQuestionario(props){
         const validInputs = () => {
             let ret = true;
             if (!validString(nome)) return false;
-    
+            if(domande.length === 0) return false;
             for(let idxD in domande){
                 if(!validString(domande[idxD].domanda)) return false;
-                if(domande[idxD].chiusa === "1")
+                if(domande[idxD].chiusa === true)
                     for(let idxR in domande[idxD].risposte)
                         if(!validString(domande[idxD].risposte[idxR])) return false;
             }
@@ -55,6 +56,21 @@ function CreaQuestionario(props){
         setDomande([...newDomande]);
     }
 
+    const setObbligatoria = (obbligatoria, indiceDomanda) => {
+        const newDomande = domande;
+        newDomande[indiceDomanda].obbligatoria = obbligatoria;
+        setDomande([...newDomande]);
+    }
+
+    const setMinR = (minR, indiceDomanda, maxR) => {
+        const newDomande = domande;
+        if (minR > maxR) minR=maxR;
+        if (minR < 1) minR = 1;
+        if (!Number.isInteger(parseInt(minR))) minR = 1;
+        newDomande[indiceDomanda].minR = minR;
+        setDomande([...newDomande]);
+    }
+
     const setValueRisposta = (testo, indiceDomanda, indiceRisposta) => {
         const newDomande = domande;
         newDomande[indiceDomanda].risposte[indiceRisposta] = testo;
@@ -64,6 +80,8 @@ function CreaQuestionario(props){
     const deleteDomanda = (indiceDomanda) => {
         const newDomande = domande;
         newDomande.splice(indiceDomanda,1);
+        setNDomande(nDomande-1)
+        for (let i = indiceDomanda; i< newDomande.length; i++)      newDomande[i].dId--;
         setDomande([...newDomande]);
     }
 
@@ -82,6 +100,18 @@ function CreaQuestionario(props){
     const validmaxR = (maxR) => {
         return Number.isInteger(parseInt(maxR)) &&  maxR >= 1 && maxR <= 10;
       };
+    const validminR = (minR) => {
+        return Number.isInteger(parseInt(minR)) &&  minR >= 1 && minR <= 10;
+      };
+
+      const moveQuestion = (indiceDomanda, nuovoIndice) => {
+        const newDomande = domande;
+        newDomande[indiceDomanda] = newDomande.splice(nuovoIndice,1, newDomande[indiceDomanda])[0];
+        const tmpId = newDomande[indiceDomanda].dId;
+        newDomande[indiceDomanda].dId = newDomande[nuovoIndice].dId;
+        newDomande[nuovoIndice].dId = tmpId;
+        setDomande([...newDomande]);
+      }
     const submit = (user) => {
         
         const addQuestionario = async () => {
@@ -94,9 +124,9 @@ function CreaQuestionario(props){
             for(let idx in domande){
                 let d;
                 if(domande[idx].chiusa){
-                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: domande[idx].risposte, chiusa:  domande[idx].chiusa, maxR : domande[idx].maxR}
+                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: domande[idx].risposte, chiusa:  domande[idx].chiusa, maxR : domande[idx].maxR, minR: domande[idx].minR}
                 }else{
-                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: [], chiusa:  domande[idx].chiusa}
+                    d = {dId: domande[idx].dId , domanda: domande[idx].domanda, risposte: [], chiusa:  domande[idx].chiusa, obbligatoria: domande[idx].obbligatoria}
                 }
 
                 API.addDomanda(d, q);
@@ -110,6 +140,7 @@ function CreaQuestionario(props){
     }
 
     return(
+        
 <Form>
   <Form.Group className="mb-3" >
     <Form.Label>Nome questionario</Form.Label>
@@ -125,8 +156,9 @@ function CreaQuestionario(props){
     {domande.map((d, index) =>{
         return (
         <>
-            <Form key={index}>
-            <Form.Group className="mb-5" >
+            
+            <Form.Group className="mb-5" key={index}>
+                <Button disabled={index===0} onClick= {() => moveQuestion(index, index-1)}><AiOutlineCaretUp></AiOutlineCaretUp></Button><Button disabled={index===domande.length-1} onClick= {() => moveQuestion(index, index+1)}><AiOutlineCaretDown></AiOutlineCaretDown></Button>
                 <Form.Label>domanda {index}</Form.Label><FaTrashAlt
                     className="trash"
                     onClick={() => deleteDomanda(index)}
@@ -152,9 +184,28 @@ function CreaQuestionario(props){
                         />
                     </Col>
                     <Col/>
+                    <Col>
+                        <Form.Label>minimo numero di risposte</Form.Label>
+                    </Col>
+                    <Col>
+                        <Form.Control 
+                            type="number" 
+                            value={d.minR} 
+                            onChange = {(event) => setMinR(event.target.value, index, d.maxR) } 
+                            isInvalid={!validminR(d.minR)}
+                        />
+                    </Col>
+                    <Col/>
                     </Row>
                 </>
-                : ""}
+                : <Form.Check
+                        inline
+                        type="checkbox"
+                        checked={d.obbligatoria}
+                        label="domanda obbligatoria"
+                        onChange={(event) => setObbligatoria(event.target.checked, index)}
+                    />
+              }
                 {d.risposte.map((r, index) => {
                     return(
                     <>
@@ -174,7 +225,7 @@ function CreaQuestionario(props){
                 <Button onClick = {() => {addRisposta(index)}} variant="secondary">Aggiungi risposta alla domanda {index}</Button>
                 : ""}
             </Form.Group>
-            </Form>
+           
            
            
         </>);
@@ -184,14 +235,14 @@ function CreaQuestionario(props){
     )};
     <Col>
     <Button onClick = {() => { 
-      setDomande([...domande, {dId: nDomande , domanda: "", risposte: [""], chiusa : true, maxR:1} ]); 
+      setDomande([...domande, {dId: nDomande , domanda: "", risposte: [""], chiusa : true, maxR:1, minR:1} ]); 
       setNDomande(nDomande + 1);}}>
           Aggiungi domanda a risposta chiusa
     </Button>
     </Col>
     <Col>
     <Button onClick = {() => { 
-      setDomande([...domande, {dId: nDomande , domanda: "", risposte: [], chiusa:false} ]); 
+      setDomande([...domande, {dId: nDomande , domanda: "", risposte: [], chiusa:false, obbligatoria: false} ]); 
       setNDomande(nDomande + 1);}}>
           Aggiungi domanda a risposta aperta
     </Button>
