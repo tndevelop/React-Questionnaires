@@ -1,13 +1,23 @@
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { Modal, Button,  Row, Col } from "react-bootstrap";
+import Form from 'react-bootstrap/Form'
+import { useState, useEffect} from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import API from "../fileJS/API.js";
 import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
+import { BackButton } from "./BackButton";
 
 function CreaQuestionario(props){
     const [nDomande, setNDomande] = useState(0);
     const[domande, setDomande] = useState([]);
     const[nome, setNome] = useState("");
+    const[valid, setValid] = useState(false);
+
+    useEffect(() => {
+        
+       if(validInputs()) setValid(true);
+       else setValid(false); 
+        
+      }); 
 
 
     const addRisposta = (indiceDomanda) => {
@@ -25,6 +35,10 @@ function CreaQuestionario(props){
 
     const setMaxR = (maxR, indiceDomanda) => {
         const newDomande = domande;
+        console.log(maxR)
+        if (maxR > 10) maxR=10;
+        if (maxR < 1) maxR = 1;
+        if (!Number.isInteger(parseInt(maxR))) maxR = 1;
         newDomande[indiceDomanda].maxR = maxR;
         setDomande([...newDomande]);
     }
@@ -48,6 +62,27 @@ function CreaQuestionario(props){
         setDomande([...newDomande]);
     }
 
+    const validInputs = () => {
+        let ret = true;
+        if (!validString(nome)) return false;
+
+        for(let idxD in domande){
+            if(!validString(domande[idxD].domanda)) return false;
+            if(domande[idxD].chiusa == "1")
+                for(let idxR in domande[idxD].risposte)
+                    if(!validString(domande[idxD].risposte[idxR])) return false;
+        }
+        return ret;
+
+    }
+
+    const validString = (str) => {
+        return str != undefined && str.length !== 0;
+      };
+
+    const validmaxR = (maxR) => {
+        return Number.isInteger(parseInt(maxR)) &&  maxR >= 1 && maxR <= 10;
+      };
     const submit = (user) => {
         
         const addQuestionario = async () => {
@@ -68,7 +103,8 @@ function CreaQuestionario(props){
                 API.addDomanda(d, q);
             }    
           };
-        
+          
+          if(!validInputs()) return;
 
           addQuestionario().catch((err) => {
             console.error(err);
@@ -79,23 +115,46 @@ function CreaQuestionario(props){
 <Form>
   <Form.Group className="mb-3" >
     <Form.Label>Nome questionario</Form.Label>
-    <Form.Control type="text" value={nome} onChange = {(event) => setNome(event.target.value)}/>
+    <Form.Control 
+        type="text" 
+        value={nome} 
+        onChange = {(event) => setNome(event.target.value)}
+        isInvalid={!validString(nome)}
+    />
     
   </Form.Group>
     
     {domande.map((d, index) =>{
         return (
         <>
+            <Form>
             <Form.Group className="mb-5" >
                 <Form.Label>domanda {index}</Form.Label><FaTrashAlt
                     className="trash"
                     onClick={() => deleteDomanda(index)}
                 ></FaTrashAlt>
-                <Form.Control type="text" value={d.domanda} onChange = {(event) => setValueDomanda(event.target.value, index) } />
+                <Form.Control 
+                    type="text" 
+                    value={d.domanda} 
+                    onChange = {(event) => setValueDomanda(event.target.value, index) } 
+                    isInvalid={!validString(d.domanda)}
+                />
                 {d.chiusa ? 
                 <>
-                    <Form.Label>massimo numero di risposte</Form.Label>
-                    <Form.Control type="text" value={d.maxR} onChange = {(event) => setMaxR(event.target.value, index) } />
+                <Row>
+                    <Col>
+                        <Form.Label>massimo numero di risposte</Form.Label>
+                    </Col>
+                    <Col>
+                        <Form.Control 
+                            type="number" 
+                            value={d.maxR} 
+                            onChange = {(event) => setMaxR(event.target.value, index) } 
+                            isInvalid={!validmaxR(d.maxR)}
+                        />
+                    </Col>
+                    <Col/>
+                    </Row>
                 </>
                 : ""}
                 {d.risposte.map((r, index) => {
@@ -105,13 +164,19 @@ function CreaQuestionario(props){
                     className="trash"
                     onClick={() => deleteRisposta(d.dId, index)}
                     ></FaTrashAlt>
-                    <Form.Control type="text" value={r} onChange = {(event) => setValueRisposta(event.target.value, d.dId, index)} />
+                    <Form.Control 
+                        type="text" 
+                        value={r} 
+                        onChange = {(event) => setValueRisposta(event.target.value, d.dId, index)} 
+                        isInvalid={!validString(r)}
+                    />
                     </>);
                 })} 
                 {d.chiusa  ? 
-                <Button onClick = {() => {addRisposta(index)}} variant="info">Aggiungi risposta alla domanda {index}</Button>
+                <Button onClick = {() => {addRisposta(index)}} variant="secondary">Aggiungi risposta alla domanda {index}</Button>
                 : ""}
             </Form.Group>
+            </Form>
            
            
         </>);
@@ -135,9 +200,15 @@ function CreaQuestionario(props){
     </Col>
   <Row className = "mt-4">
     <Col >
+        {valid ? 
         <Link to="/admin"><Button variant="success"  onClick = {() => submit(props.user)}>
             Submit
-        </Button></Link>
+        </Button></Link> :
+        <Button variant="success"  disabled>
+        Submit
+    </Button>
+        }
+        <BackButton faseModifica="true"></BackButton>
     </Col>
   </Row>
 </Form>

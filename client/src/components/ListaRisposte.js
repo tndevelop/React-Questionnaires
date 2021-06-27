@@ -3,6 +3,7 @@ import { Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import API from "../fileJS/API.js";
 import { AiOutlineCaretRight, AiOutlineCaretLeft } from "react-icons/ai";
+import { BackButton } from "./BackButton";
 
 function ListaRisposte(props) {
   const [compilazioni, setCompilazioni] = useState([]);
@@ -99,9 +100,18 @@ function ListaRisposte(props) {
 
       })}
 
-      <Row><Col><Button disabled = {nCompilazione==0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button><Button disabled={nCompilazione == (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button></Col></Row>
-    
+      <Row>
+        <Col>
+          <BackButton></BackButton>
+        </Col>
+        <Col>
+          <Button disabled = {nCompilazione==0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button>
+          <Button disabled={nCompilazione == (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button>
+        </Col> 
+      </Row>
+      
     </Col>
+    
   );
   
 }

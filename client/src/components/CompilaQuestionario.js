@@ -3,10 +3,21 @@ import { Container } from "react-bootstrap";
 import {useState, useEffect} from "react";
 import API from "../fileJS/API.js";
 import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
+import { BackButton } from "./BackButton";
 
 function CompilaQuestionario(props) {
     const[nome, setNome] = useState("");
     const[domande, setDomande] = useState([]);
+    const[valid, setValid] = useState(false);
+
+    useEffect(() => {
+      
+        
+       if(validInputs()) setValid(true);
+       else setValid(false); 
+       
+      }); 
+
     const checkItem = (selezionata, indiceDomanda, indiceRisposta) => {
         const newDomande = domande;
         let risposteDate = newDomande[indiceDomanda].risposte.filter( (r) => r.selezionata==true ).length;
@@ -69,11 +80,38 @@ function CompilaQuestionario(props) {
           });   
     }, []); //run only once at beginning
 
+    const validString = (str) => {
+      return str != undefined && str.length !== 0;
+    };
+
+    const validInputs = () => {
+      let ret = true;
+      console.log(domande)
+      if (!validString(nome)) return false;
+      for(let idxD in domande){
+          if(domande[idxD].chiusa == "1"){
+              if(domande[idxD].risposte.filter(r=>r.selezionata == true).length == 0) 
+                return false;
+          }else {
+            if(!validString(domande[idxD].testoRispostaAperta)) return false;
+          }
+      }
+      return ret;
+
+  }
+
   return (
     <Col as={Container} fluid="xl" className="mainContainer">
-      <Form.Group className="mb-3" >
+    <BackButton utilizzatore="true" faseModifica="true"></BackButton>
+
+      <Form.Group className="mb-3 mt-3" >
     <Form.Label>Il tuo nome</Form.Label>
-    <Form.Control type="text" value={nome} onChange = {(event) => setNome(event.target.value)}/>
+    <Form.Control 
+      type="text" 
+      value={nome} 
+      onChange = {(event) => setNome(event.target.value)}
+      isInvalid={!validString(nome)}
+    />
     
   </Form.Group>
       {domande.map((d, index) => {
@@ -83,7 +121,10 @@ function CompilaQuestionario(props) {
                 <Row>
                     <Col/> 
                     <Col>{d.domanda}</Col> 
-                    {d.chiusa=="1"? <Col>massimo risposte: {d.maxR}</Col> :  <Col/>}
+                    {d.chiusa=="1"? <Col>massimo risposte: {d.maxR}</Col> :  <Col/>
+                      
+                    }
+                    {d.chiusa=="1" && d.risposte.filter((r) => r.selezionata).length == 0 ? <p className="red">select at least 1</p> : "" }
                 </Row>
                 <ListGroup variant="flush">
 
@@ -107,7 +148,12 @@ function CompilaQuestionario(props) {
                         </ListGroup.Item> 
                     );})
                     
-                    : <Form.Control type="text" value={d.testoRispostaAperta} onChange = {(event) => setValueRispostaAperta(event.target.value, d.dId)} />
+                    : <Form.Control 
+                          type="text" 
+                          value={d.testoRispostaAperta} 
+                          onChange = {(event) => setValueRispostaAperta(event.target.value, d.dId)} 
+                          isInvalid={!validString(d.testoRispostaAperta)}
+                        />
                     }
                 </ListGroup>
                 
@@ -116,7 +162,9 @@ function CompilaQuestionario(props) {
         );
 
       })}
-        <Link to="/utilizzatore"><Button className="mt-4" onClick = {() => submit()}>Submit</Button></Link>
+      {valid ? 
+        <Link to="/utilizzatore"><Button  className="mt-4" onClick = {() => submit()}>Submit</Button></Link>
+      : <Button  className="mt-4" disabled>Submit</Button>}
     </Col>
   );
   
