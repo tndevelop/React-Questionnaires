@@ -1,6 +1,5 @@
 import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useState } from "react";
-import {Link} from "react-router-dom";
 
 function LoginForm(props) {
   //const [userName, setUsername] = useState("");
@@ -14,7 +13,7 @@ function LoginForm(props) {
   const validEmail = (email) => {
     let mailformat =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    return email.match(mailformat) == null ? false : true;
+    return email.match(mailformat) === null ? false : true;
   };
 
   const tryLogin = async (event) => {
@@ -29,7 +28,7 @@ function LoginForm(props) {
 
     setMessage("");
     let response = await props.login(credentials);
-    setMessage(response);
+    if(response !== true)   setMessage(response);
   };
 
   return (

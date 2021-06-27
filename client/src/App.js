@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import {React, useState, useEffect} from "react";
 import './App.css';
-import { Container, Button, Col} from "react-bootstrap";
+import { Container, Button} from "react-bootstrap";
 import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
 import ListaQuestionari from "./components/ListaQuestionari";
 import ListaRisposte from "./components/ListaRisposte";
@@ -13,7 +13,6 @@ import API from "./fileJS/API.js";
 
 
 function App() {
-  const [dirty, setDirty] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({ id: -1 });
 
@@ -36,7 +35,6 @@ function App() {
       if (response) {
         setUser({ id: response.id, name: response.name });
         setLoggedIn(true);
-        setDirty(true); //così viene eseguita la useEffect
       return true;//  return response.name;
       }
     } catch (e) {
@@ -72,6 +70,7 @@ function App() {
             render={() => (
               <>
                 <ListaQuestionari  utilizzatore="true"></ListaQuestionari>
+                <Link to="/"><Button variant="danger">Torna alla login</Button></Link> 
               </>
             )}
           />
@@ -126,7 +125,6 @@ function App() {
             exact
             path="/admin"
             render={() => {
-              console.log(loggedIn)
                 return (
                   <>
                     {loggedIn ? (

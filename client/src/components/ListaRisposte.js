@@ -17,7 +17,6 @@ function ListaRisposte(props) {
       if (props.loggedIn) {
         const compilazioni = await API.fetchCompilazioni(props.userId, props.qId);
         setCompilazioni(compilazioni);
-        console.log(compilazioni)
       }
     };
     getCompilazioni().catch((err) => {
@@ -25,7 +24,7 @@ function ListaRisposte(props) {
         });
         
     
-  }, []);
+  }, [props.userId, props.qId, props.loggedIn]);
 
   useEffect(() => {
     const getDomande = async () => {
@@ -41,16 +40,16 @@ function ListaRisposte(props) {
           console.error(err);
         });
     
-  }, [compilazioni.length, nCompilazione]);
+  }, [compilazioni.length, nCompilazione, props.loggedIn, props.qId, compilazioni]);
 
   useEffect(() => {
     const getRisposte = async (nDomanda) => {
       const newDomande = domande;
-      if (props.loggedIn && compilazioni.length > 0 && loadRisposte) {
+      if (props.loggedIn /*&& compilazioni.length > 0*/ && loadRisposte) {
         const risposte = await API.fetchRisposteQuestionario(props.userId , props.qId, domande[nDomanda].id-1);
         newDomande[nDomanda].risposte = risposte;
         setDomande([...newDomande]);
-        if(nDomanda == domande.filter(d => d.chiusa=="1").length-1)
+        if(parseInt(nDomanda) === domande.filter(d => d.chiusa==="1").length-1)
           setLoading(false);
         setLoadRisposte(false);
       }
@@ -58,13 +57,13 @@ function ListaRisposte(props) {
 
     
     for (let idx in domande){
-      if(domande[idx].chiusa=="1")
+      if(domande[idx].chiusa==="1")
         getRisposte(idx).catch((err) => {
           console.error(err);
         });
     }
     
-  }, [domande.length, loadRisposte]);
+  }, [domande.length, loadRisposte, props.loggedIn, props.userId, props.qId, domande]);
 
 
   return (
@@ -77,11 +76,11 @@ function ListaRisposte(props) {
         return (
           
             <>
-                <Row>
+                <Row key = {index}>
                     <Col/><Col>{q.testoDomanda}</Col><Col/>
                 </Row>
-                <ListGroup variant="flush">
-                    {q.chiusa=="1"? q.risposte.map((r, index) => {
+                <ListGroup variant="flush" key = {index + domande.length}>
+                    {q.chiusa==="1"? q.risposte.map((r, index) => {
                     return ( 
                         <ListGroup.Item key={index} index={index} active={Array.isArray(q.rispostaSelezionata) ? q.rispostaSelezionata.includes(`${index}`): q.rispostaSelezionata === index} >
                             <Row>
@@ -105,8 +104,8 @@ function ListaRisposte(props) {
           <BackButton></BackButton>
         </Col>
         <Col>
-          <Button disabled = {nCompilazione==0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button>
-          <Button disabled={nCompilazione == (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button>
+          <Button disabled = {nCompilazione===0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button>
+          <Button disabled={nCompilazione === (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button>
         </Col> 
       </Row>
       

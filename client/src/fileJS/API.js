@@ -1,7 +1,5 @@
 
 
-const BASEURL = "/api";
-
 const fetchQuestionari = async (userId) => {
     const response = await fetch(`/api/admin/questionari?user_id=${userId}`);
     const responseBody = await response.json();
@@ -18,7 +16,7 @@ const fetchDomandeQuestionario = async (compId, questId) => {
     const response = await fetch(`/api/admin/domandeQuestionario?comp_id=${compId}&quest_id=${questId}`);
     const responseBody = await response.json();
     for (let idx in responseBody){
-      if (responseBody[idx].chiusa == "1" && typeof responseBody[idx].rispostaSelezionata === 'string')
+      if (responseBody[idx].chiusa === "1" && typeof responseBody[idx].rispostaSelezionata === 'string')
         responseBody[idx].rispostaSelezionata = responseBody[idx].rispostaSelezionata.split(",");
     }
     

@@ -1,9 +1,9 @@
-import { Modal, Button,  Row, Col } from "react-bootstrap";
+import { Button,  Row, Col } from "react-bootstrap";
 import Form from 'react-bootstrap/Form'
 import { useState, useEffect} from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import API from "../fileJS/API.js";
-import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
+import { Link} from "react-router-dom";
 import { BackButton } from "./BackButton";
 
 function CreaQuestionario(props){
@@ -13,11 +13,24 @@ function CreaQuestionario(props){
     const[valid, setValid] = useState(false);
 
     useEffect(() => {
-        
+        const validInputs = () => {
+            let ret = true;
+            if (!validString(nome)) return false;
+    
+            for(let idxD in domande){
+                if(!validString(domande[idxD].domanda)) return false;
+                if(domande[idxD].chiusa === "1")
+                    for(let idxR in domande[idxD].risposte)
+                        if(!validString(domande[idxD].risposte[idxR])) return false;
+            }
+            return ret;
+    
+        }
+
        if(validInputs()) setValid(true);
        else setValid(false); 
         
-      }); 
+      }, [nome, domande, domande.length, nDomande]); 
 
 
     const addRisposta = (indiceDomanda) => {
@@ -35,7 +48,6 @@ function CreaQuestionario(props){
 
     const setMaxR = (maxR, indiceDomanda) => {
         const newDomande = domande;
-        console.log(maxR)
         if (maxR > 10) maxR=10;
         if (maxR < 1) maxR = 1;
         if (!Number.isInteger(parseInt(maxR))) maxR = 1;
@@ -56,28 +68,15 @@ function CreaQuestionario(props){
     }
 
     const deleteRisposta = (indiceDomanda, indiceRisposta) => {
-        console.log(indiceDomanda);
         const newDomande = domande;
         newDomande[indiceDomanda].risposte.splice(indiceRisposta, 1);
         setDomande([...newDomande]);
     }
 
-    const validInputs = () => {
-        let ret = true;
-        if (!validString(nome)) return false;
-
-        for(let idxD in domande){
-            if(!validString(domande[idxD].domanda)) return false;
-            if(domande[idxD].chiusa == "1")
-                for(let idxR in domande[idxD].risposte)
-                    if(!validString(domande[idxD].risposte[idxR])) return false;
-        }
-        return ret;
-
-    }
+    
 
     const validString = (str) => {
-        return str != undefined && str.length !== 0;
+        return str !== undefined && str.length !== 0;
       };
 
     const validmaxR = (maxR) => {
@@ -104,7 +103,6 @@ function CreaQuestionario(props){
             }    
           };
           
-          if(!validInputs()) return;
 
           addQuestionario().catch((err) => {
             console.error(err);
@@ -127,7 +125,7 @@ function CreaQuestionario(props){
     {domande.map((d, index) =>{
         return (
         <>
-            <Form>
+            <Form key={index}>
             <Form.Group className="mb-5" >
                 <Form.Label>domanda {index}</Form.Label><FaTrashAlt
                     className="trash"

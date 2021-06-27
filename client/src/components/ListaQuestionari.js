@@ -1,5 +1,5 @@
 import { Row, ListGroup, Col } from "react-bootstrap";
-import { Container, Form } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { Link} from "react-router-dom";
 import API from "../fileJS/API.js";
 import { useState, useEffect } from "react";
@@ -16,16 +16,14 @@ function ListaQuestionari(props) {
         setQuestionari(questionari);
       }else if(props.utilizzatore){
         const questionari = await API.fetchQuestionariUtilizzatore(props.userId);
-        console.log(questionari)
         setQuestionari(questionari);
-      }
-      
+      }     
     };
     
     getQuestionari().catch((err) => {
           console.error(err);
         });   
-  }, []); //run only once at beginning
+  }, [props.loggedIn, props.userId, props.utilizzatore]); //run only once at beginning
 
   return (
     <Col as={Container} fluid="xl" className="mainContainer">
@@ -34,7 +32,7 @@ function ListaQuestionari(props) {
       
       {questionari.map((q, index) => {
         return (
-          <Link to={{pathname: redirectAddress,
+          <Link key={index} to={{pathname: redirectAddress,
           state : {"qId" : q.id, "userId": q.user}}}>
             <ListGroup.Item key={q.id} index={q.id} onClick={() => {
 

@@ -1,7 +1,6 @@
-import { Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import {Link} from "react-router-dom";
 import { AiOutlineLeft } from "react-icons/ai";
-import { propTypes } from "react-bootstrap/esm/Image";
 
 function BackButton(props) {
   

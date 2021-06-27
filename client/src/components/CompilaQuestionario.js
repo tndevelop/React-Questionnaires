@@ -2,7 +2,7 @@ import { Row, ListGroup, Col, Form, Button} from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import {useState, useEffect} from "react";
 import API from "../fileJS/API.js";
-import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
+import { Link} from "react-router-dom";
 import { BackButton } from "./BackButton";
 
 function CompilaQuestionario(props) {
@@ -10,18 +10,33 @@ function CompilaQuestionario(props) {
     const[domande, setDomande] = useState([]);
     const[valid, setValid] = useState(false);
 
+    
+
     useEffect(() => {
-      
+      const validInputs = () => {
+        let ret = true;
+        if (!validString(nome)) return false;
+        for(let idxD in domande){
+            if(domande[idxD].chiusa === "1"){
+                if(domande[idxD].risposte.filter(r=>r.selezionata === true).length===0) 
+                  return false;
+            }else {
+              if(!validString(domande[idxD].testoRispostaAperta)) return false;
+            }
+        }
+        return ret;
+  
+      }
         
        if(validInputs()) setValid(true);
        else setValid(false); 
        
-      }); 
+      }, [nome, domande.length, domande, props.qId]); 
 
     const checkItem = (selezionata, indiceDomanda, indiceRisposta) => {
         const newDomande = domande;
-        let risposteDate = newDomande[indiceDomanda].risposte.filter( (r) => r.selezionata==true ).length;
-        if(risposteDate >= newDomande[indiceDomanda].maxR && selezionata==true) return; //non permettere la selezione di più risposte di quelle consentite
+        let risposteDate = newDomande[indiceDomanda].risposte.filter( (r) => r.selezionata===true ).length;
+        if(risposteDate >= newDomande[indiceDomanda].maxR && selezionata===true) return; //non permettere la selezione di più risposte di quelle consentite
         newDomande[indiceDomanda].risposte[indiceRisposta].selezionata = selezionata;
         setDomande([...newDomande]);
       }
@@ -52,7 +67,7 @@ function CompilaQuestionario(props) {
           for (let ridx in domande[idx].risposte)
             if(domande[idx].risposte[ridx].selezionata)
               risp_selezionate.push(ridx);
-          if(domande[idx].chiusa == "1"){
+          if(domande[idx].chiusa === "1"){
               d = {user: props.userId, compilazione: compId, questionario: props.qId, testo_domanda: domande[idx].domanda, chiusa: domande[idx].chiusa, risposta_selezionata: risp_selezionate}
           }else{
               d = {user: props.userId, compilazione: compId, questionario: props.qId, testo_domanda: domande[idx].domanda, chiusa: domande[idx].chiusa, rispostaAperta: domande[idx].testoRispostaAperta }
@@ -72,33 +87,20 @@ function CompilaQuestionario(props) {
     useEffect(() => {
       const getDomande = async () => {
           const domande = await API.fetchDomandeUtilizzatore(props.qId);
+          for(let idx in domande){   domande[idx].testoRispostaAperta = "";     } //create attribute so that it doesn't trigger warning afterwards
           setDomande(domande);
       };
       
       getDomande().catch((err) => {
             console.error(err);
           });   
-    }, []); //run only once at beginning
+    }, [props.qId]); //run only once at beginning
 
     const validString = (str) => {
-      return str != undefined && str.length !== 0;
+      return str !== undefined && str.length !== 0;
     };
 
-    const validInputs = () => {
-      let ret = true;
-      console.log(domande)
-      if (!validString(nome)) return false;
-      for(let idxD in domande){
-          if(domande[idxD].chiusa == "1"){
-              if(domande[idxD].risposte.filter(r=>r.selezionata == true).length == 0) 
-                return false;
-          }else {
-            if(!validString(domande[idxD].testoRispostaAperta)) return false;
-          }
-      }
-      return ret;
-
-  }
+    
 
   return (
     <Col as={Container} fluid="xl" className="mainContainer">
@@ -118,23 +120,24 @@ function CompilaQuestionario(props) {
         return (
           
             <>
-                <Row>
+                <Row key= {index}>
                     <Col/> 
                     <Col>{d.domanda}</Col> 
-                    {d.chiusa=="1"? <Col>massimo risposte: {d.maxR}</Col> :  <Col/>
+                    {d.chiusa==="1"? <Col>massimo risposte: {d.maxR}</Col> :  <Col/>
                       
                     }
-                    {d.chiusa=="1" && d.risposte.filter((r) => r.selezionata).length == 0 ? <p className="red">select at least 1</p> : "" }
+                    {d.chiusa==="1" && d.risposte.filter((r) => r.selezionata).length === 0 ? <p className="red">select at least 1</p> : "" }
                 </Row>
-                <ListGroup variant="flush">
+                <ListGroup key={index + domande.length} variant="flush">
 
-                    {d.chiusa=="1" ?
+                    {d.chiusa==="1" ?
                     
                     d.risposte.map((r, index) => {
                     return ( 
                         <ListGroup.Item key={index} index={index}  >
-                            <Row>
+                            <Row >
                             <Form.Check
+                                
                                 checked={r.selezionata}
                                 onChange={(event) => {
                                 checkItem(event.target.checked, d.dId, index);
@@ -149,6 +152,7 @@ function CompilaQuestionario(props) {
                     );})
                     
                     : <Form.Control 
+                              
                           type="text" 
                           value={d.testoRispostaAperta} 
                           onChange = {(event) => setValueRispostaAperta(event.target.value, d.dId)} 
