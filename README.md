@@ -16,6 +16,7 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
 
 
 - POST `/api/sessions`
+  - descrizione: dati username e password effettua la login 
   - request parameters: NONE
   - request body content: 
    { username: "john.doe@polito.it", 
@@ -25,10 +26,12 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
   username: "john.doe@polito.it", 
   name: "John" }
 - DELETE `/api/sessions/current`
+  - descrizione: effettua il logout
   - request parameters: NONE
   - request body content: NONE
   - response body content: NONE
 - GET `/api/sessions/current`
+  - descrizione: ritorna i dati dell'utente se è correttamente loggato
   - request parameters: NONE
    - request body content: NONE
   - response body content: 
@@ -36,6 +39,7 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
         username: "john.doe@polito.it", 
         name: "John" }
 - GET `/api/admin/questionari`
+  - descrizione: dato l'id dell'admin, ritorna la lista dei questionari dell'admin
   - request parameters: ?user_id=1
    - request body content: NONE
   - response body content: 
@@ -43,25 +47,30 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
   {"id":2,"titolo":"Ti piace il calcio?","nCompilazioni":2,"user":1},
   {"id":5,"titolo":"ds","nCompilazioni":0,"user":1},{"id":6,"titolo":"Ti piace la pasta?","nCompilazioni":1,"user":1}]
 - GET `/api/admin/compilazioni`
+  - descrizione: dato l'id dell'admin e l'id del questionario, ritorna la lista delle compilazioni effettuate dai vari utilizzatori (senza le risposte alle domande)
   - request parameters: ?user_id=1&quest_id=2
    - request body content: NONE
   - response body content: 
   [{"id":1,"user":1,"questionario":1,"nomeUtilizzatore":"Marcello"},{"id":2,"user":1,"questionario":1,"nomeUtilizzatore":"Ornella"}]
 - GET `/api/admin/domandeQuestionario`
+  - descrizione: dato l'id del questionario e l'id della compilazione, ritorna la lista delle domande della compilazione e delle relative risposte selezionate
   - request parameters: ?comp_id=1&quest_id=2
    - request body content: NONE
   - response body content:
   [{"id":1,"testoDomanda":"Spiega che cos'è il fuorigioco","compilazione":1,"questionario":2,"chiusa":"0","rispostaSelezionata":null,"rispostaAperta":"Quando la palla viene passata troppo presto"},{"id":2,"testoDomanda":"Quali sono le squadre più vincenti del campionato?","compilazione":1,"questionario":2,"chiusa":"1","rispostaSelezionata":"0,1,5,6","rispostaAperta":null},{"id":3,"testoDomanda":"Hai mai giocato a calcio?","compilazione":1,"questionario":2,"chiusa":"1","rispostaSelezionata":0,"rispostaAperta":null}]
 - GET `/api/admin/risposteQuestionario`
+  - descrizione: dato l'id del questionario, l'id dell'amministratore e l'id di una domanda chiusa, ritorna la lista delle possibili risposte alla domanda chiusa separate da virgola
   - request parameters: ?quest_id=1&user_id=1&dom_id=3
    - request body content: NONE
   - response body content: stringa contenente le varie risposte alla domanda separate da virgola
   [{"risposte":"1,2,3,+ di 3"}]
 - POST `/api/admin/questionari`
+  - descrizione: dato il titolo del questionario e l'id dell'admin che l'ha creato inserisce il nuovo questionario nel DB
   - request parameters: NONE
    - request body content: { titolo: 'gf', user_id: 1 }
   - response body content: { 1}
 - POST `/api/admin/domandeQuestionario`
+  - descrizione: riceve in input i dati della domanda di un questionario appena creato e inserisce la domanda del questionario nel DB
   - request parameters: NONE
    - request body content: {
   dId: 0,
@@ -75,29 +84,34 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
     }
   - response body content: NONE
 - POST `/api/utilizzatore/questionari`
+  - descrizione: dato l'id del questionario e l'id dell'admin che l'ha creato incrementa di uno il numero di compilazioni e ritorna il numero aggiornato
   - request parameters: NONE
    - request body content: {
       q_id : 1,
       user_id : 1
     }
-  - response body content: ritorna il numero di compilazioni
+  - response body content:
   { 4 }
 - GET `/api/utilizzatore/questionari`
+  - descrizione: ritorna la lista di tutti i questionari compilabili da un utilizzatore (i.e. tutti quelli a DB)
   - request parameters: NONE
    - request body content: NONE
   - response body content: 
   [{"id":1,"titolo":"ti piacciono i gatti?","nCompilazioni":2,"user":1},{"id":2,"titolo":"Ti piace il calcio?","nCompilazioni":2,"user":1},{"id":3,"titolo":"Cosa ti piace fare nel tempo libero?","nCompilazioni":2,"user":0},{"id":4,"titolo":"Sei un artista?","nCompilazioni":2,"user":0},{"id":5,"titolo":"ds","nCompilazioni":0,"user":1},{"id":6,"titolo":"Ti piace la pasta?","nCompilazioni":1,"user":1}]
 - GET `/api/utilizzatore/domande`
+  - descrizione: dato l'id del questionario ritorna la lista delle domande del questionario e delle possibili risposte alle stesse 
   - request parameters: ?quest_id=1
    - request body content: NONE
   - response body content: 
   [{"dId":0,"qId":1,"userId":1,"domanda":"hai mai avuto un gatto?","risposte":"Sì,No","chiusa":"1","maxR":1,"minR":1,"obbligatoria":null},{"dId":1,"qId":1,"userId":1,"domanda":"Ti piacciono gli animali?","risposte":"","chiusa":"0","maxR":null,"minR":null,"obbligatoria":0},{"dId":2,"qId":1,"userId":1,"domanda":"Ti piacciono i gatti?","risposte":"","chiusa":"0","maxR":null,"minR":null,"obbligatoria":1},{"dId":3,"qId":1,"userId":1,"domanda":"Se hai avuto un gatto, quante volte gli davi da mangiare al giorno?","risposte":"1,2,3,+ di 3","chiusa":"1","maxR":1,"minR":0,"obbligatoria":null}]
 - POST `/api/utilizzatore/compilazioni`
+  - descrizione: dato il nome dell'utilizzatore, l'id del questionario e l'id dell'admin che lo ha creato inserisce la compilazione a DB e ne ritorna l'identificativo
   - request parameters: NONE
    - request body content: { nome: 'Tommaso', qId: 9, user: 1 }
   - response body content: restituisce l'id della compilazione
   { 4 }
 - POST `/api/utilizzatore/domande`
+  - descrizione: dato l'id della compilazione, l'id del questionari e l'id dell'admin che lo ha creato inserisce la domanda del questionario ed il modo in cui è stata compilata dall'utilizzatore, restituendone l'id
   - request parameters: NONE
    - request body content: {
   user: 1,
@@ -107,7 +121,7 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
   chiusa: '1',
   risposta_selezionata: [ '1' ]
 }
-  - response body content: restituisce l'id della domanda
+  - response body content: 
   { 1 }
 
 
