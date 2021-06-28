@@ -1,4 +1,4 @@
-
+const BASEURL = "/api";
 
 const fetchQuestionari = async (userId) => {
     const response = await fetch(`/api/admin/questionari?user_id=${userId}`);
@@ -105,6 +105,7 @@ const addCompilazione = async (compilazione) => {
       body: JSON.stringify(bodyChiamata),
     });
     const responseBody = await response.json();
+    console.log(responseBody)
     return responseBody;
   };
 
@@ -135,6 +136,16 @@ const addCompilazione = async (compilazione) => {
   async function logOut() {
     await fetch("/api/sessions/current", { method: "DELETE" });
   }
+
+  async function getUserInfo() {
+    const response = await fetch(BASEURL + "/sessions/current");
+    const userInfo = await response.json();
+    if (response.ok) {
+      return userInfo;
+    } else {
+      throw userInfo; // an object with the error coming from the server
+    }
+  }
 const API = {
     fetchQuestionari,
     fetchCompilazioni,
@@ -148,6 +159,7 @@ const API = {
     addDomandaCompilata,
     logIn,
     logOut,
+    getUserInfo,
     increaseNCompilazioni
   };
   export default API;
