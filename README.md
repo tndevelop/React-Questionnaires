@@ -127,11 +127,11 @@ Anche se è un'informazione ridondante, per eccesso di zelo anche per tutte le g
 
 ## Database Tables
 
-- Table `users` - contains id, email, name, hash
-- Table `questionari` - contains id, titolo, nCompilazioni, user
-- Table `domande_questionari_vuote` - contains d_id, q_id, user_id, domanda, risposte, chiusa, maxR, minR, obbligatoria
-- Table `domande_questionari` - contains id, user, compilazione, questionario, testo_domanda, chiusa, risposta_selezinata, rispostaAperta
-- Table `compilazioni` - contains id, user, questionario, nome_utilizzatore
+- Table `users` - contiene gli admin dell'applicazione, quelli che possono creare i questionari. campi: id, email, name, hash
+- Table `questionari` - contiene i questionari dell'applicazione. campi: id, titolo, nCompilazioni, user
+- Table `domande_questionari_vuote` - contiene le domande NON compilate (vuote) dei questionari. campi d_id, q_id, user_id, domanda, risposte, chiusa, maxR, minR, obbligatoria
+- Table `domande_questionari` - contiene le compilazioni della singola domanda del singolo questionario fatte dagli utilizzatori. campi: id, user, compilazione, questionario, testo_domanda, chiusa, risposta_selezinata, rispostaAperta
+- Table `compilazioni` - contiene l'elenco delle compilazioni fatte dai vari utilizzatori ai vari questionari. campi: id, user, questionario, nome_utilizzatore
 
 ## Main React Components
 
