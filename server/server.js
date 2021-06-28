@@ -294,7 +294,6 @@ app.post(
     try {
       
       let domanda = req.body;
-      console.log(domanda);
       let id = await dao.getDomandaMaxId(domanda.user, domanda.questionario, domanda.compilazione);
       await dao.createDomanda(domanda, id);
       res.status(200).json(id).end();

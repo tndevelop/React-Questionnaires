@@ -111,7 +111,6 @@ function CreaQuestionario(props){
         const tmpId = newDomande[indiceDomanda].dId;
         newDomande[indiceDomanda].dId = newDomande[nuovoIndice].dId;
         newDomande[nuovoIndice].dId = tmpId;
-        console.log(newDomande)
         setDomande([...newDomande]);
       }
     const submit = (user) => {
@@ -157,9 +156,9 @@ function CreaQuestionario(props){
     
     {domande.map((d, index) =>{
         return (
-        <>
+        <Row key={index}>
             
-            <Form.Group className="mb-5" key={index}>
+            <Form.Group className="mb-5" >
                 <Button disabled={index===0} onClick= {() => moveQuestion(index, index-1)}><AiOutlineCaretUp></AiOutlineCaretUp></Button><Button disabled={index===domande.length-1} onClick= {() => moveQuestion(index, index+1)}><AiOutlineCaretDown></AiOutlineCaretDown></Button>
                 <Form.Label>domanda {index}</Form.Label><FaTrashAlt
                     className="trash"
@@ -210,18 +209,18 @@ function CreaQuestionario(props){
               }
                 {d.risposte.map((r, index) => {
                     return(
-                    <>
-                    <Form.Label>risposta {index}</Form.Label><FaTrashAlt
+                    <Row index = {index}>
+                    <Form.Label>risposta {index}<FaTrashAlt
                     className="trash"
                     onClick={() => deleteRisposta(d.dId, index)}
-                    ></FaTrashAlt>
+                    ></FaTrashAlt></Form.Label>
                     <Form.Control 
                         type="text" 
                         value={r} 
                         onChange = {(event) => setValueRisposta(event.target.value, d.dId, index)} 
                         isInvalid={!validString(r)}
                     />
-                    </>);
+                    </Row>);
                 })} 
                 {d.chiusa  ? 
                 <Button onClick = {() => {addRisposta(index)}} variant="secondary">Aggiungi risposta alla domanda {index}</Button>
@@ -230,7 +229,7 @@ function CreaQuestionario(props){
            
            
            
-        </>);
+        </Row>);
 
 
     }

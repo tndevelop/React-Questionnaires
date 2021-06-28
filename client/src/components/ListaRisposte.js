@@ -76,8 +76,8 @@ function ListaRisposte(props) {
       {loading? <p>Non ci sono compilazioni qui</p> : domande.map((q, index) => {
         return (
           
-            <>
-                <Row key = {index}>
+            <Row key = {index}>
+                <Row >
                     <Col/><Col>{q.testoDomanda}</Col><Col/>
                 </Row>
                 <ListGroup variant="flush" key = {index + domande.length}>
@@ -94,7 +94,7 @@ function ListaRisposte(props) {
                     <p>{(q.rispostaAperta !== undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <b>L'utilizzatore non ha risposto alla domanda</b>}</p>
                     }
                 </ListGroup>
-          </>
+          </Row>
           
         );
 

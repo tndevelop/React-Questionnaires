@@ -105,7 +105,6 @@ const addCompilazione = async (compilazione) => {
       body: JSON.stringify(bodyChiamata),
     });
     const responseBody = await response.json();
-    console.log(responseBody)
     return responseBody;
   };
 

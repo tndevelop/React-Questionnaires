@@ -119,8 +119,8 @@ function CompilaQuestionario(props) {
       {domande.map((d, index) => {
         return (
           
-            <>
-                <Row key= {index}>
+            <Row key= {index}>
+                <Row >
                     <Col/> 
                     <Col>{d.domanda}</Col> 
                     {d.chiusa==="1"? <Col>massimo risposte: {d.maxR} minimo risposte: {d.minR}</Col> :  <Col>domanda {d.obbligatoria===1 ? "obbligatoria" : "facoltativa"}</Col>
@@ -128,7 +128,7 @@ function CompilaQuestionario(props) {
                     }
                     {d.chiusa==="1" && d.risposte.filter((r) => r.selezionata).length < d.minR ? <p className="red">select at least {d.minR}</p> : "" }
                 </Row>
-                <ListGroup key={index + domande.length} variant="flush">
+                <ListGroup variant="flush">
 
                     {d.chiusa==="1" ?
                     
@@ -162,7 +162,7 @@ function CompilaQuestionario(props) {
                     }
                 </ListGroup>
                 
-          </>
+          </Row>
           
         );
 
