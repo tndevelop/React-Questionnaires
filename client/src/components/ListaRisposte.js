@@ -81,7 +81,7 @@ function ListaRisposte(props) {
                     <Col/><Col>{q.testoDomanda}</Col><Col/>
                 </Row>
                 <ListGroup variant="flush" key = {index + domande.length}>
-                    {q.chiusa==="1"? q.risposte.map((r, index) => {
+                    {(q.chiusa==="1" && q.risposte !== undefined)? q.risposte.map((r, index) => {
                     return ( 
                         <ListGroup.Item key={index} index={index} active={Array.isArray(q.rispostaSelezionata) ? q.rispostaSelezionata.includes(`${index}`): q.rispostaSelezionata === index} >
                             <Row>
