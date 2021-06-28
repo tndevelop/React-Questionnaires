@@ -106,8 +106,8 @@ function CompilaQuestionario(props) {
     <Col as={Container} fluid="xl" className="mainContainer">
     <BackButton utilizzatore="true" faseModifica="true"></BackButton>
 
-      <Form.Group className="mb-3 mt-3" >
-    <Form.Label>Il tuo nome</Form.Label>
+      <Form.Group className=" mt-3" >
+    <Form.Label><b>Il tuo nome</b></Form.Label>
     <Form.Control 
       type="text" 
       value={nome} 
@@ -120,9 +120,9 @@ function CompilaQuestionario(props) {
         return (
           
             <Row key= {index}>
-                <Row >
-                    <Col/> 
-                    <Col>{d.domanda}</Col> 
+                <Row className="mb-2 mt-4">
+                    
+                    <Col><b>{d.domanda}</b></Col> 
                     {d.chiusa==="1"? <Col>massimo risposte: {d.maxR} minimo risposte: {d.minR}</Col> :  <Col>domanda {d.obbligatoria===1 ? "obbligatoria" : "facoltativa"}</Col>
                       
                     }
@@ -134,7 +134,7 @@ function CompilaQuestionario(props) {
                     
                     d.risposte.map((r, index) => {
                     return ( 
-                        <ListGroup.Item key={index} index={index}  >
+                        <ListGroup.Item key={index} index={index} className="bg-transparent"  >
                             <Row >
                             <Form.Check
                                 

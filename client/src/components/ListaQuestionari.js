@@ -1,13 +1,16 @@
-import { Row, ListGroup, Col } from "react-bootstrap";
+import { Row, ListGroup, Col, Button } from "react-bootstrap";
 import { Container } from "react-bootstrap";
 import { Link} from "react-router-dom";
 import API from "../fileJS/API.js";
 import { useState, useEffect } from "react";
+import ButtonNuovoQuestionario from "./ButtonNuovoQuestionario";
 
 function ListaQuestionari(props) {
 
   const redirectAddress = props.utilizzatore ? "/utilizzatore/questionario" :  "/admin/questionario";
   const [questionari, setQuestionari] = useState([]);
+  const variantColor = "bg-light";
+  const firstColor = "bg-white"
 
   useEffect(() => {
     const getQuestionari = async () => {
@@ -26,7 +29,8 @@ function ListaQuestionari(props) {
   }, [props.loggedIn, props.userId, props.utilizzatore]); //run only once at beginning
 
   return (
-    <Col as={Container} fluid="xl" className="mainContainer">
+    <>
+    <Col as={Container} fluid="xl" className="mainContainer mt-5">
       
     <ListGroup variant="flush">
       
@@ -34,11 +38,11 @@ function ListaQuestionari(props) {
         return (
           <Link key={index} to={{pathname: redirectAddress,
           state : {"qId" : q.id, "userId": q.user}}}>
-            <ListGroup.Item key={q.id} index={q.id} onClick={() => {
+            <ListGroup.Item  className = { index % 2 ? variantColor : firstColor } key={q.id} index={q.id} onClick={() => {
 
             }}>
               <Row>
-                <Col>{q.titolo}</Col>
+                <Col><b>{q.titolo}</b></Col>
                 <Col>{q.nCompilazioni}</Col>   
               </Row>
             </ListGroup.Item>
@@ -46,7 +50,10 @@ function ListaQuestionari(props) {
         );
       })}
     </ListGroup>
+    {props.utilizzatore ? <Link to="/"><Button className="mt-3" variant="secondary">Torna alla login</Button></Link> : <ButtonNuovoQuestionario/>}
     </Col>
+    
+    </>
   );
   
 }

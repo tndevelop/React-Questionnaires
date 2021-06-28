@@ -1,16 +1,15 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import {React, useState, useEffect} from "react";
 import './App.css';
-import { Container, Button} from "react-bootstrap";
-import {  BrowserRouter as Router,  Switch,  Route,  Redirect, Link} from "react-router-dom";
+import { Container} from "react-bootstrap";
+import {  BrowserRouter as Router,  Switch,  Route,  Redirect} from "react-router-dom";
 import ListaQuestionari from "./components/ListaQuestionari";
 import ListaRisposte from "./components/ListaRisposte";
-import ButtonNuovoQuestionario from "./components/ButtonNuovoQuestionario";
 import CreaQuestionario from "./components/CreaQuestionario";
 import {LoginForm, LogoutButtonAndWelcomeUser} from "./components/LoginForm"
 import CompilaQuestionario from "./components/CompilaQuestionario";
 import API from "./fileJS/API.js";
-
+document.body.style = 'background: #ccebff;';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -70,7 +69,7 @@ function App() {
             render={() => (
               <>
                 <ListaQuestionari  utilizzatore="true"></ListaQuestionari>
-                <Link to="/"><Button variant="danger">Torna alla login</Button></Link> 
+                 
               </>
             )}
           />
@@ -142,7 +141,7 @@ function App() {
                       userId = {user.id}
                       
                     ></ListaQuestionari>
-                    <ButtonNuovoQuestionario/>
+                    
                   </>
                 );
               }
@@ -154,7 +153,7 @@ function App() {
             render={() => (
               <>{loggedIn ? ( <Redirect to ={"/admin"}/>) :
                 <><LoginForm login = {login}></LoginForm>
-                  <Link to="/utilizzatore"><Button>continua come utilizzatore</Button></Link>
+                  
                 </>
                 }
               </>

@@ -77,8 +77,8 @@ function ListaRisposte(props) {
         return (
           
             <Row key = {index}>
-                <Row >
-                    <Col/><Col>{q.testoDomanda}</Col><Col/>
+                <Row className="mt-4 mb-2">
+                    <Col><b>{q.testoDomanda}</b></Col>
                 </Row>
                 <ListGroup variant="flush" key = {index + domande.length}>
                     {(q.chiusa==="1" && q.risposte !== undefined)? q.risposte.map((r, index) => {
@@ -91,7 +91,7 @@ function ListaRisposte(props) {
                     );
             
                     }): 
-                    <p>{(q.rispostaAperta !== undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <b>L'utilizzatore non ha risposto alla domanda</b>}</p>
+                    <p>{(q.rispostaAperta !== undefined && q.rispostaAperta!== "") ? q.rispostaAperta : <i>L'utilizzatore non ha risposto alla domanda</i>}</p>
                     }
                 </ListGroup>
           </Row>
@@ -104,7 +104,7 @@ function ListaRisposte(props) {
         <Col>
           <BackButton></BackButton>
         </Col>
-        <Col>
+        <Col className="mt-3">
           <Button disabled = {nCompilazione===0} onClick= {() =>{setNCompilazione(nCompilazione-1)}}><AiOutlineCaretLeft/></Button>
           <Button disabled={nCompilazione === (compilazioni.length-1)} onClick= {() =>{setNCompilazione(nCompilazione+1);}}><AiOutlineCaretRight/></Button>
         </Col> 

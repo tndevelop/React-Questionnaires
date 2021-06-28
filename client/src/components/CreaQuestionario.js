@@ -1,4 +1,4 @@
-import { Button,  Row, Col } from "react-bootstrap";
+import { Button,  Row, Col, Container } from "react-bootstrap";
 import Form from 'react-bootstrap/Form'
 import { useState, useEffect} from "react";
 import { FaTrashAlt } from "react-icons/fa";
@@ -141,10 +141,10 @@ function CreaQuestionario(props){
     }
 
     return(
-        
+<Col as={Container} fluid="xl" className="mainContainer">
 <Form>
   <Form.Group className="mb-3" >
-    <Form.Label>Nome questionario</Form.Label>
+    <Form.Label><b>Nome questionario</b></Form.Label>
     <Form.Control 
         type="text" 
         value={nome} 
@@ -159,8 +159,9 @@ function CreaQuestionario(props){
         <Row key={index}>
             
             <Form.Group className="mb-5" >
-                <Button disabled={index===0} onClick= {() => moveQuestion(index, index-1)}><AiOutlineCaretUp></AiOutlineCaretUp></Button><Button disabled={index===domande.length-1} onClick= {() => moveQuestion(index, index+1)}><AiOutlineCaretDown></AiOutlineCaretDown></Button>
-                <Form.Label>domanda {index}</Form.Label><FaTrashAlt
+                <Button variant="info" className="mb-2" disabled={index===0} onClick= {() => moveQuestion(index, index-1)}><AiOutlineCaretUp></AiOutlineCaretUp></Button><Button variant="info" className="mb-2" disabled={index===domande.length-1} onClick= {() => moveQuestion(index, index+1)}><AiOutlineCaretDown></AiOutlineCaretDown></Button>
+                
+                <Form.Label><b>Domanda {index}</b></Form.Label><FaTrashAlt
                     className="trash"
                     onClick={() => deleteDomanda(index)}
                 ></FaTrashAlt>
@@ -174,7 +175,7 @@ function CreaQuestionario(props){
                 <>
                 <Row>
                     <Col>
-                        <Form.Label>massimo numero di risposte</Form.Label>
+                        <Form.Label>Massimo numero di risposte</Form.Label>
                     </Col>
                     <Col>
                         <Form.Control 
@@ -186,7 +187,7 @@ function CreaQuestionario(props){
                     </Col>
                     <Col/>
                     <Col>
-                        <Form.Label>minimo numero di risposte</Form.Label>
+                        <Form.Label>Minimo numero di risposte</Form.Label>
                     </Col>
                     <Col>
                         <Form.Control 
@@ -210,7 +211,7 @@ function CreaQuestionario(props){
                 {d.risposte.map((r, index) => {
                     return(
                     <Row index = {index}>
-                    <Form.Label>risposta {index}<FaTrashAlt
+                    <Form.Label><b>Risposta {index}</b><FaTrashAlt
                     className="trash"
                     onClick={() => deleteRisposta(d.dId, index)}
                     ></FaTrashAlt></Form.Label>
@@ -223,7 +224,7 @@ function CreaQuestionario(props){
                     </Row>);
                 })} 
                 {d.chiusa  ? 
-                <Button onClick = {() => {addRisposta(index)}} variant="secondary">Aggiungi risposta alla domanda {index}</Button>
+                <Button className="mt-3" onClick = {() => {addRisposta(index)}} variant="info">Aggiungi risposta alla domanda {index}</Button>
                 : ""}
             </Form.Group>
            
@@ -233,16 +234,16 @@ function CreaQuestionario(props){
 
 
     }
-    )};
-    <Col>
-    <Button onClick = {() => { 
+    )}
+    <Col className="mb-3">
+    <Button variant="light" onClick = {() => { 
       setDomande([...domande, {dId: nDomande , domanda: "", risposte: [""], chiusa : true, maxR:1, minR:1} ]); 
       setNDomande(nDomande + 1);}}>
           Aggiungi domanda a risposta chiusa
     </Button>
     </Col>
     <Col>
-    <Button onClick = {() => { 
+    <Button variant="light" onClick = {() => { 
       setDomande([...domande, {dId: nDomande , domanda: "", risposte: [], chiusa:false, obbligatoria: false} ]); 
       setNDomande(nDomande + 1);}}>
           Aggiungi domanda a risposta aperta
@@ -251,17 +252,19 @@ function CreaQuestionario(props){
   <Row className = "mt-4">
     <Col >
         {valid ? 
-        <Link to="/admin"><Button variant="success"  onClick = {() => submit(props.user)}>
+        <Link to="/admin"><Button variant="primary"  onClick = {() => submit(props.user)}>
             Submit
         </Button></Link> :
-        <Button variant="success"  disabled>
+        <Button variant="primary"  disabled>
         Submit
     </Button>
         }
-        <BackButton faseModifica="true"></BackButton>
+        
     </Col>
   </Row>
+  <BackButton faseModifica="true"></BackButton>
 </Form>
+</Col>        
 );
 }
 

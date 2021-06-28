@@ -1,5 +1,6 @@
 import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useState } from "react";
+import { Link} from "react-router-dom";
 
 function LoginForm(props) {
   //const [userName, setUsername] = useState("");
@@ -32,7 +33,7 @@ function LoginForm(props) {
   };
 
   return (
-    <Row className="below-nav">
+    <Row className="mt-5">
       <Col sm="4"></Col>
       <Form as={Col}>
         {message !== "" ? <Alert variant="danger">{message}</Alert> : ""}
@@ -64,9 +65,12 @@ function LoginForm(props) {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Button variant="primary" type="submit" onClick={tryLogin}>
+        <Button className = "mt-3" variant="primary" type="submit" onClick={tryLogin}>
           Login
         </Button>
+        
+        <Col className="mt-3"><Link to="/utilizzatore"><Button>Continua come utilizzatore</Button></Link></Col>
+        
       </Form>
       <Col sm="4"></Col>
     </Row>
@@ -84,12 +88,12 @@ function LogoutButtonAndWelcomeUser(props) {
           {welcome ? (
             <Alert
               as={Col}
-              variant="success"
+              variant="dark"
               onClose={() => setWelcome(false)}
               dismissible
-              className="text-center"
+              className="text-center mt-3"
             >
-              Welcome, {props.username}
+              Benvenut*, {props.username}
             </Alert>
           ) : (
             ""
@@ -99,7 +103,7 @@ function LogoutButtonAndWelcomeUser(props) {
       </Row>
       <Row>
         <Col sm="4"></Col>
-        <Button variant="danger" as={Col} onClick={props.logout}>
+        <Button className="mt-3" variant="secondary" as={Col} onClick={props.logout}>
           Logout
         </Button>
         <Col sm="4"></Col>
